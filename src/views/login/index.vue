@@ -1,29 +1,42 @@
 <template>
   <div class="login-container">
-    <el-form class="login-form">
+    <el-form class="login-form" :model="loginForm" :rules="loginRules">
       <div class="title-container">
         <h3 class="title">登录</h3>
       </div>
-      <!-- USERNAME -->
-      <el-form-item>
+      <!-- USERNAME USERNAME USERNAME -->
+      <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon="user"></svg-icon>
         </span>
-        <el-input placeholder="username" name="username" type="text"></el-input>
+        <el-input
+          placeholder="username"
+          name="username"
+          type="text"
+          v-model="loginForm.username"
+        ></el-input>
       </el-form-item>
-      <!-- PASSWORD -->
-      <el-form-item>
+      <!-- PASSWORD PASSWORD PASSWORD -->
+      <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon="password"></svg-icon>
         </span>
-        <el-input placeholder="password" name="password"></el-input>
-        <span class="show-pwd">
-          <svg-icon icon="eye"></svg-icon>
+        <el-input
+          placeholder="password"
+          name="password"
+          :type="passwordType"
+          v-model="loginForm.password"
+        ></el-input>
+        <!-- 显示按钮 显示按钮 显示按钮 -->
+        <span class="show-pwd" @click="onChangePasswordType">
+          <svg-icon
+            :icon="passwordType === 'password' ? 'eye' : 'eye-open'"
+          ></svg-icon>
         </span>
       </el-form-item>
 
-      <!-- 登录 -->
-      <el-button type="primary" style="width: 100%; margin-bottom: 30px">
+      <!-- 登录按钮 登录按钮 登录按钮 -->
+      <el-button type="primary" style="width: 100%; margin-bottom: 30px;">
         登录
       </el-button>
     </el-form>
@@ -31,7 +44,45 @@
 </template>
 
 <script setup>
-import {} from 'vue'
+import { ref } from 'vue'
+import { validatePassword } from './rules'
+// 数据源
+const loginForm = ref({
+  username: 'super-admin',
+  password: '123456'
+})
+// 验证规则
+// 自定义的验证规则validatePassword
+const loginRules = ref({
+  username: [
+    {
+      required: true,
+      trigger: 'blur',
+      message: 'User name is required / 用户名为必填项'
+    }
+  ],
+  password: [
+    {
+      required: true,
+      trigger: 'blur',
+      validator: validatePassword()
+    }
+  ]
+})
+// 密码显示功能
+// password绑定passwordType属性，而passwordType是有ref动态绑定，使用有动态效果
+const passwordType = ref('password')
+const timeOutEvent = ref(0)
+const onChangePasswordType = () => {
+  if (passwordType.value === 'password') {
+    passwordType.value = 'text'
+    timeOutEvent.value = setTimeout(function () {
+      passwordType.value = 'password'
+    }, 1000)
+  } else {
+    passwordType.value = 'password'
+  }
+}
 </script>
 
 <style lang="scss" scoped>
