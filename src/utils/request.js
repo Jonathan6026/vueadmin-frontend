@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import store from '@/store'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000
@@ -20,6 +21,21 @@ service.interceptors.response.use(
   (error) => {
     // 请求超时
     ElMessage.error(error.message) // 提示错误信息
+    return Promise.reject(error)
+  }
+)
+
+// 请求拦截器 作用统一注入token 通过store/getters.js 快速访问token
+service.interceptors.request.use(
+  (config) => {
+    // 在这个位置需要统一的去注入token
+    if (store.getters.token) {
+      // 如果token存在 注入token
+      config.headers.Authorization = `Bearer ${store.getters.token}`
+    }
+    return config
+  },
+  (error) => {
     return Promise.reject(error)
   }
 )
