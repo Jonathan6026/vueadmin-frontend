@@ -1,4 +1,4 @@
-import { login, getUserInfo } from '@/api/sys'
+import { login, getUserInfo, getWeather } from '@/api/sys'
 import md5 from 'md5'
 import { setItem, getItem, removeAllItem } from '@/utils/storage'
 import { TOKEN } from '@/constant'
@@ -10,7 +10,8 @@ export default {
   namespaced: true,
   state: () => ({
     token: getItem(TOKEN) || '',
-    userInfo: {}
+    userInfo: {},
+    weatherInfo: {}
   }),
   mutations: {
     setToken(state, token) {
@@ -49,6 +50,12 @@ export default {
     async getUserInfo(context, userInfo) {
       const res = await getUserInfo()
       this.commit('user/setUserInfo', res)
+      return res
+    },
+    async getWeather() {
+      const res = await getWeather()
+      // this.commit('/', res)
+      console.log(res)
       return res
     },
     /*
